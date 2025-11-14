@@ -91,7 +91,7 @@ function AppContent() {
   }
 
   return (
-    <Router>
+    <Router basename="/HomeDoc_Frontend">
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/login'} />} />
