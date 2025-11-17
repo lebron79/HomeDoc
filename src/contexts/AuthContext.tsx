@@ -7,8 +7,25 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string, role: string, specialization?: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    role: string,
+    age?: number,
+    phone?: string,
+    gender?: string,
+    address?: string,
+    specialization?: string,
+    licenseNumber?: string,
+    yearsOfExperience?: number,
+    education?: string,
+    bio?: string,
+    consultationFee?: number,
+    doctorPhone?: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,32 +78,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) throw error;
+    
+    // Load profile after successful login
+    if (data.user) {
+      await loadProfile(data.user.id);
+    }
   };
 
-  const signUp = async (email: string, password: string, fullName: string, role: string, specialization?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    role: string,
+    age?: number,
+    phone?: string,
+    gender?: string,
+    address?: string,
+    specialization?: string,
+    licenseNumber?: string,
+    yearsOfExperience?: number,
+    education?: string,
+    bio?: string,
+    consultationFee?: number,
+    doctorPhone?: string
+  ) => {
+    console.log('SignUp called with role:', role);
+    
+    // Sign up with user metadata - the database trigger will create the profile automatically
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName,
+          role: role,
+          // Patient fields
+          age: age,
+          phone: phone,
+          gender: gender,
+          address: address,
+          // Doctor fields
+          specialization: specialization,
+          license_number: licenseNumber,
+          years_of_experience: yearsOfExperience,
+          education: education,
+          bio: bio,
+          consultation_fee: consultationFee,
+          doctor_phone: doctorPhone,
+        }
+      }
     });
 
     if (error) throw error;
 
+    console.log('User created, waiting for trigger to create profile...');
+    
+    // Wait for the database trigger to complete (give it a moment)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Load the profile that was automatically created by the trigger
     if (data.user) {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: data.user.id,
-          full_name: fullName,
-          role,
-          specialization,
-        });
-
-      if (profileError) throw profileError;
+      await loadProfile(data.user.id);
+      console.log('Profile loaded successfully');
     }
   };
 
@@ -96,8 +154,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfile(null);
   };
 
+  const refreshProfile = async () => {
+    if (user) {
+      await loadProfile(user.id);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

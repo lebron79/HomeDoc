@@ -9,55 +9,71 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type UserRole = 'patient' | 'doctor' | 'admin';
-
 export interface UserProfile {
   id: string;
+  email: string;
   full_name: string;
-  role: UserRole;
-  specialization?: string;
+  role: 'patient' | 'doctor' | 'admin';
+  avatar?: string;
+  // Patient fields
+  age?: number;
   phone?: string;
+  gender?: string;
+  address?: string;
+  // Doctor fields
+  specialization?: string;
+  license_number?: string;
+  years_of_experience?: number;
+  education?: string;
+  bio?: string;
+  consultation_fee?: number;
+  available_days?: string[];
+  available_hours?: string;
+  // Admin management fields
+  is_active: boolean;
+  suspended_at?: string;
+  suspended_by?: string;
+  suspension_reason?: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface Symptom {
+export interface AIMessage {
   id: string;
-  patient_id: string;
-  symptoms_text: string;
-  severity: 'mild' | 'moderate' | 'severe';
-  created_at: string;
+  text: string;
+  isBot: boolean;
+  timestamp: Date;
+  type?: 'text' | 'analysis';
+  analysis?: {
+    diagnosis: string;
+    recommendation: string;
+    severity: 'low' | 'medium' | 'high';
+    requiresDoctor: boolean;
+    confidence: number;
+    additionalNotes?: string;
+  };
+  source?: 'gemini' | 'fallback';
+  rawGemini?: string;
 }
 
-export interface Diagnosis {
-  id: string;
-  symptom_id: string;
-  patient_id: string;
-  doctor_id?: string;
-  diagnosis_type: 'ai' | 'manual';
-  disease_name: string;
-  recommendation: string;
-  severity_level: 'low' | 'medium' | 'high';
-  requires_doctor: boolean;
-  is_validated: boolean;
-  validated_at?: string;
-  created_at: string;
-}
-
-export interface Feedback {
-  id: string;
-  diagnosis_id: string;
-  patient_id: string;
-  rating: number;
-  comment?: string;
-  created_at: string;
-}
-
-export interface Notification {
+export interface AIConversation {
   id: string;
   user_id: string;
-  diagnosis_id?: string;
-  message: string;
-  is_read: boolean;
+  conversation_type: 'symptom_check' | 'health_chat';
+  title?: string;
+  messages: AIMessage[];
+  final_diagnosis?: {
+    diagnosis: string;
+    recommendation: string;
+    severity: 'low' | 'medium' | 'high';
+    requiresDoctor: boolean;
+    confidence: number;
+    additionalNotes?: string;
+  };
+  severity?: 'mild' | 'moderate' | 'severe';
+  rating?: number; // 1-5 star rating
+  rating_comment?: string; // Optional feedback text
+  patient_status?: string; // Patient's self-reported status
   created_at: string;
+  updated_at: string;
 }
