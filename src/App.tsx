@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthPage } from './components/Auth/AuthPage';
@@ -21,6 +21,18 @@ import { HeartbeatLoader } from './components/Layout/HeartbeatLoader';
 import { CreateCaseForm } from './components/Patient/CreateCaseForm';
 import { PatientCasesList } from './components/Patient/PatientCasesList';
 import { DoctorCasesList } from './components/Doctor/DoctorCasesList';
+
+// Landing Page Wrapper to use navigation
+function LandingPageWrapper() {
+  const navigate = useNavigate();
+  return <LandingPage onGetStarted={() => navigate('/login')} />;
+}
+
+// Auth Page Wrapper to use navigation
+function AuthPageWrapper() {
+  const navigate = useNavigate();
+  return <AuthPage onBack={() => navigate('/')} />;
+}
 
 // Protected Route Component
 function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
@@ -94,8 +106,8 @@ function AppContent() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/login'} />} />
-        <Route path="/login" element={<AuthPage onBack={() => window.location.href = '/'} />} />
+        <Route path="/" element={<LandingPageWrapper />} />
+        <Route path="/login" element={<AuthPageWrapper />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
         {/* Protected Routes */}
