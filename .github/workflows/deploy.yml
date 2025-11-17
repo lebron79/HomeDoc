@@ -36,9 +36,15 @@ jobs:
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env
           echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" >> .env
+          cat .env
 
       - name: Build
         run: npm run build
+        
+      - name: Verify build output
+        run: |
+          echo "Checking if environment variables were embedded in build..."
+          grep -r "vebmeyrvgkifagheaoib" dist/ || echo "Warning: Supabase URL not found in build"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
