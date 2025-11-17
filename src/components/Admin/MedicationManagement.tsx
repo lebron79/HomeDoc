@@ -287,7 +287,7 @@ export function MedicationManagement() {
               <span className="text-sm font-medium">In Stock</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {medications.filter((m) => m.stock_quantity > 0).length}
+              {medications.reduce((sum, m) => sum + m.stock_quantity, 0)} units
             </p>
           </div>
           <div className="bg-red-50 rounded-lg p-4">
