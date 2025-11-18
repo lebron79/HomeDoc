@@ -16,13 +16,25 @@ export function ResetPasswordPage() {
   useEffect(() => {
     // Handle the password recovery from URL
     const handleRecovery = async () => {
-      // Check if we have a recovery token in the URL (from email link)
-      const hashParams = new URLSearchParams(window.location.hash.substring(window.location.hash.indexOf('?')));
-      const accessToken = hashParams.get('access_token');
-      const type = hashParams.get('type');
+      // Check if we have a recovery token in URL search params (after ?)
+      const searchParams = new URLSearchParams(window.location.search);
+      const accessToken = searchParams.get('access_token');
+      const type = searchParams.get('type');
 
       if (type === 'recovery' && accessToken) {
         // Token is valid, user can reset password
+        setError('');
+        return;
+      }
+
+      // Also check hash params as fallback
+      const hashParams = new URLSearchParams(window.location.hash.substring(window.location.hash.indexOf('?')));
+      const hashAccessToken = hashParams.get('access_token');
+      const hashType = hashParams.get('type');
+
+      if (hashType === 'recovery' && hashAccessToken) {
+        // Token is valid, user can reset password
+        setError('');
         return;
       }
 
