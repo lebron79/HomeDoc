@@ -16,8 +16,16 @@ export function ResetPasswordPage() {
   useEffect(() => {
     // Handle the password recovery from URL
     const handleRecovery = async () => {
-      // Check if we have a recovery token in URL search params (after ?)
+      // Check for error in URL search params
       const searchParams = new URLSearchParams(window.location.search);
+      const urlError = searchParams.get('error');
+      
+      if (urlError) {
+        setError(decodeURIComponent(urlError));
+        return;
+      }
+      
+      // Check if we have a recovery token in URL search params (after ?)
       const accessToken = searchParams.get('access_token');
       const type = searchParams.get('type');
 
