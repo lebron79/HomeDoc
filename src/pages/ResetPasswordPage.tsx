@@ -33,11 +33,28 @@ export function ResetPasswordPage() {
         }
         
         const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
         const type = params.get('type');
         
-        if (type === 'recovery' && accessToken) {
-          // Token is valid, user can reset password
-          setError('');
+        if (type === 'recovery' && accessToken && refreshToken) {
+          // Set the session with the recovery token
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            if (error) {
+              console.error('Session error:', error);
+              setError('Failed to validate reset link: ' + error.message);
+            } else {
+              // Session set successfully, user can now reset password
+              setError('');
+            }
+          } catch (err: any) {
+            console.error('Session exception:', err);
+            setError('Failed to validate reset link');
+          }
           return;
         }
       }
@@ -49,10 +66,24 @@ export function ResetPasswordPage() {
         const hashParams = new URLSearchParams(tokenHash);
         
         const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
         const type = hashParams.get('type');
         
-        if (type === 'recovery' && accessToken) {
-          setError('');
+        if (type === 'recovery' && accessToken && refreshToken) {
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            if (error) {
+              setError('Failed to validate reset link: ' + error.message);
+            } else {
+              setError('');
+            }
+          } catch (err: any) {
+            setError('Failed to validate reset link');
+          }
           return;
         }
       }
