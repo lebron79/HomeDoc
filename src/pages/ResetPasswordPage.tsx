@@ -26,8 +26,8 @@ export function ResetPasswordPage() {
       }
       
       // Check if we have a recovery token in URL search params (after ?)
-      const accessToken = searchParams.get('access_token');
-      const type = searchParams.get('type');
+      let accessToken = searchParams.get('access_token');
+      let type = searchParams.get('type');
 
       if (type === 'recovery' && accessToken) {
         // Token is valid, user can reset password
@@ -35,15 +35,22 @@ export function ResetPasswordPage() {
         return;
       }
 
-      // Also check hash params as fallback
-      const hashParams = new URLSearchParams(window.location.hash.substring(window.location.hash.indexOf('?')));
-      const hashAccessToken = hashParams.get('access_token');
-      const hashType = hashParams.get('type');
-
-      if (hashType === 'recovery' && hashAccessToken) {
-        // Token is valid, user can reset password
-        setError('');
-        return;
+      // Check SECOND hash segment (after the route hash)
+      // URL format: /#/reset-password#access_token=...&type=recovery
+      const fullHash = window.location.hash; // Gets everything after first #
+      const secondHashIndex = fullHash.indexOf('#', 1); // Find second # after the route
+      
+      if (secondHashIndex > 0) {
+        const tokenHash = fullHash.substring(secondHashIndex + 1); // Get everything after second #
+        const hashParams = new URLSearchParams(tokenHash);
+        accessToken = hashParams.get('access_token');
+        type = hashParams.get('type');
+        
+        if (type === 'recovery' && accessToken) {
+          // Token is valid, user can reset password
+          setError('');
+          return;
+        }
       }
 
       // Otherwise check if we have a valid session
