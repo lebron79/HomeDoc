@@ -145,7 +145,7 @@ export function LoginForm({ onBack }: { onBack: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">{
+    <form onSubmit={handleSubmit} className="space-y-4">
       {/* Back Button */}
       <button
         type="button"
