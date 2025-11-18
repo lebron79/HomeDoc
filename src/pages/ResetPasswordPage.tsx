@@ -16,38 +16,42 @@ export function ResetPasswordPage() {
   useEffect(() => {
     // Handle the password recovery from URL
     const handleRecovery = async () => {
-      // Check for error in URL search params
-      const searchParams = new URLSearchParams(window.location.search);
-      const urlError = searchParams.get('error');
+      // With HashRouter, query params are part of the hash
+      // URL format: /#/reset-password?access_token=...&type=recovery
+      const fullHash = window.location.hash; // Gets #/reset-password?access_token=...
       
-      if (urlError) {
-        setError(decodeURIComponent(urlError));
-        return;
-      }
-      
-      // Check if we have a recovery token in URL search params (after ?)
-      let accessToken = searchParams.get('access_token');
-      let type = searchParams.get('type');
-
-      if (type === 'recovery' && accessToken) {
-        // Token is valid, user can reset password
-        setError('');
-        return;
-      }
-
-      // Check SECOND hash segment (after the route hash)
-      // URL format: /#/reset-password#access_token=...&type=recovery
-      const fullHash = window.location.hash; // Gets everything after first #
-      const secondHashIndex = fullHash.indexOf('#', 1); // Find second # after the route
-      
-      if (secondHashIndex > 0) {
-        const tokenHash = fullHash.substring(secondHashIndex + 1); // Get everything after second #
-        const hashParams = new URLSearchParams(tokenHash);
-        accessToken = hashParams.get('access_token');
-        type = hashParams.get('type');
+      // Split by ? to get query params
+      const questionMarkIndex = fullHash.indexOf('?');
+      if (questionMarkIndex > 0) {
+        const queryString = fullHash.substring(questionMarkIndex + 1);
+        const params = new URLSearchParams(queryString);
+        
+        const urlError = params.get('error');
+        if (urlError) {
+          setError(decodeURIComponent(urlError));
+          return;
+        }
+        
+        const accessToken = params.get('access_token');
+        const type = params.get('type');
         
         if (type === 'recovery' && accessToken) {
           // Token is valid, user can reset password
+          setError('');
+          return;
+        }
+      }
+      
+      // Also check for double hash format: /#/reset-password#access_token=...
+      const secondHashIndex = fullHash.indexOf('#', 1);
+      if (secondHashIndex > 0) {
+        const tokenHash = fullHash.substring(secondHashIndex + 1);
+        const hashParams = new URLSearchParams(tokenHash);
+        
+        const accessToken = hashParams.get('access_token');
+        const type = hashParams.get('type');
+        
+        if (type === 'recovery' && accessToken) {
           setError('');
           return;
         }
