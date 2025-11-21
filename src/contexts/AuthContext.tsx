@@ -114,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
+        emailRedirectTo: 'https://lebron79.github.io/HomeDoc/confirm-email.html',
         data: {
           full_name: fullName,
           role: role,
