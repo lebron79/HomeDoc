@@ -22,10 +22,35 @@ import { HeartbeatLoader } from './components/Layout/HeartbeatLoader';
 import { CreateCaseForm } from './components/Patient/CreateCaseForm';
 import { PatientCasesList } from './components/Patient/PatientCasesList';
 import { DoctorCasesList } from './components/Doctor/DoctorCasesList';
+import { useEffect } from 'react';
+import { supabase } from './lib/supabase';
 
 // Landing Page Wrapper to use navigation
 function LandingPageWrapper() {
   const navigate = useNavigate();
+  
+  // Handle email confirmation tokens from URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    
+    // Check if there's an access_token in the hash (from email confirmation)
+    if (hash.includes('access_token=') && hash.includes('type=signup')) {
+      const params = new URLSearchParams(hash.split('#')[1] || '');
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+      
+      if (accessToken && refreshToken) {
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        }).then(() => {
+          // Redirect to dashboard after successful email confirmation
+          navigate('/dashboard');
+        });
+      }
+    }
+  }, [navigate]);
+  
   return <LandingPage onGetStarted={() => navigate('/login')} />;
 }
 
