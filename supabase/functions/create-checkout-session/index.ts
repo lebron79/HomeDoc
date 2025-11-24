@@ -45,14 +45,18 @@ serve(async (req) => {
 
     // Get the origin from the request
     const origin = req.headers.get('origin') || 'http://localhost:5173'
+    
+    // Determine the correct base URL
+    const isProduction = origin.includes('github.io')
+    const baseUrl = isProduction ? 'https://lebron79.github.io/HomeDoc/#' : `${origin}/HomeDoc/#`
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/payment-canceled`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/payment-canceled`,
       customer_email: email,
       metadata: {
         shipping_address: shippingAddress || '',
