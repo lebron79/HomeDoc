@@ -148,10 +148,12 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
 
     try {
       // First, get all cases
+      // Show: 1) Pending cases with no specific doctor OR assigned to this doctor
+      //       2) Cases already accepted by this doctor
       const { data: casesData, error: casesError } = await supabase
         .from('medical_cases')
         .select('*')
-        .or(`status.eq.pending,doctor_id.eq.${profile.id}`)
+        .or(`and(status.eq.pending,or(doctor_id.is.null,doctor_id.eq.${profile.id})),doctor_id.eq.${profile.id}`)
         .is('hidden_from_doctor', null)
         .order('emergency_level', { ascending: false })
         .order('created_at', { ascending: false });
