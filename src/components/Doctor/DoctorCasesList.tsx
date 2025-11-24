@@ -170,19 +170,32 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
 
       if (casesError) throw casesError;
 
-      // Then fetch patient data for each case
+      // Then fetch patient data for each case using the RPC function
       const casesWithPatients = await Promise.all(
         filteredCases.map(async (caseItem) => {
-          const { data: patientData } = await supabase
-            .from('user_profiles')
-            .select('full_name, age')
-            .eq('id', caseItem.patient_id)
-            .single();
+          try {
+            const { data: patientData, error } = await supabase
+              .rpc('get_patient_info_for_case', { case_patient_id: caseItem.patient_id });
 
-          return {
-            ...caseItem,
-            patient: patientData || { full_name: 'Unknown Patient', age: null }
-          };
+            if (error) {
+              console.error('Error fetching patient info:', error);
+              return {
+                ...caseItem,
+                patient: { full_name: 'Unknown Patient', age: null }
+              };
+            }
+
+            return {
+              ...caseItem,
+              patient: patientData?.[0] || { full_name: 'Unknown Patient', age: null }
+            };
+          } catch (err) {
+            console.error('Error in patient fetch:', err);
+            return {
+              ...caseItem,
+              patient: { full_name: 'Unknown Patient', age: null }
+            };
+          }
         })
       );
       
