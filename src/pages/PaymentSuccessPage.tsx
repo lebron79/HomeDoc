@@ -11,8 +11,21 @@ export function PaymentSuccessPage() {
 
   useEffect(() => {
     const verifyPayment = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const sessionId = params.get('session_id');
+      // Extract session_id from URL (works with both regular and hash router)
+      let sessionId = null;
+      
+      // Try to get from regular search params first
+      const searchParams = new URLSearchParams(window.location.search);
+      sessionId = searchParams.get('session_id');
+      
+      // If not found, try to extract from hash (for HashRouter)
+      if (!sessionId && window.location.hash) {
+        const hashParts = window.location.hash.split('?');
+        if (hashParts.length > 1) {
+          const hashParams = new URLSearchParams(hashParts[1]);
+          sessionId = hashParams.get('session_id');
+        }
+      }
 
       if (!sessionId) {
         setError('No session ID found');
