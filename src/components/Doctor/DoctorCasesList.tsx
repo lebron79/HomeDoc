@@ -16,7 +16,8 @@ import {
   UserCheck,
   Filter,
   Trash2,
-  User
+  User,
+  CheckSquare
 } from 'lucide-react';
 
 interface MedicalCase {
@@ -116,6 +117,8 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterEmergency, setFilterEmergency] = useState<string>('all');
   const [acceptingCase, setAcceptingCase] = useState<string | null>(null);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [caseToComplete, setCaseToComplete] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     if (profile) {
@@ -266,9 +269,12 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
   };
 
   const handleMarkCompleted = async (caseId: string, patientName: string) => {
-    if (!confirm(`Mark case for ${patientName} as completed?`)) {
-      return;
-    }
+    setCaseToComplete({ id: caseId, name: patientName });
+    setShowCompleteModal(true);
+  };
+
+  const confirmComplete = async () => {
+    if (!caseToComplete) return;
 
     try {
       const { error } = await supabase
@@ -277,10 +283,12 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
           status: 'completed',
           completed_at: new Date().toISOString()
         })
-        .eq('id', caseId);
+        .eq('id', caseToComplete.id);
 
       if (error) throw error;
       await loadCases();
+      setShowCompleteModal(false);
+      setCaseToComplete(null);
     } catch (error) {
       console.error('Error completing case:', error);
       alert('Failed to complete case. Please try again.');
@@ -497,6 +505,52 @@ export function DoctorCasesList({ onOpenChat }: DoctorCasesListProps = {}) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Complete Case Confirmation Modal */}
+      {showCompleteModal && caseToComplete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-green-100 rounded-full">
+                <CheckSquare className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Complete Case?</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to mark the case for <span className="font-semibold text-gray-900">{caseToComplete.name}</span> as completed?
+            </p>
+            
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+              <div className="flex">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-yellow-800">
+                  This will close the case and mark it as finished. You won't be able to reopen it later.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowCompleteModal(false);
+                  setCaseToComplete(null);
+                }}
+                className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmComplete}
+                className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Complete Case
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

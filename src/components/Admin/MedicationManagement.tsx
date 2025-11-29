@@ -455,8 +455,8 @@ export function MedicationManagement() {
               </div>
 
               <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
-                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                  <div className="grid md:grid-cols-2 gap-4 pb-4">
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                  <div className="grid md:grid-cols-2 gap-4 p-4 pb-24">
                 {/* Name */}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
