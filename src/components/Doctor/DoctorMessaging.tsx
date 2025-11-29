@@ -466,12 +466,6 @@ export function DoctorMessaging({ initialCaseId, initialPatientId }: DoctorMessa
                             </span>
                           </div>
                         )}
-                          />
-                        ) : (
-                          <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-rose-100 rounded-full flex items-center justify-center ring-2 ring-red-200 group-hover:ring-red-400 transition-all">
-                            <User className="w-6 h-6 text-red-600" />
-                          </div>
-                        )}
                         {conv.unread_count > 0 && (
                           <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg">
                             {conv.unread_count}
