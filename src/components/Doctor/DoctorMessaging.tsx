@@ -122,13 +122,42 @@ export function DoctorMessaging({ initialCaseId, initialPatientId }: DoctorMessa
 
   // Auto-select conversation when initialPatientId is provided
   useEffect(() => {
-    if (initialPatientId && conversations.length > 0) {
-      const conversation = conversations.find(c => c.patient.id === initialPatientId);
-      if (conversation) {
-        setSelectedConversation(conversation);
-      }
+    async function selectOrCreateConversation() {
+      if (!initialPatientId || !profile) return;
+      
+      await loadConversations(); // Ensure conversations are loaded
+      
+      // Wait a bit for conversations to load
+      setTimeout(async () => {
+        const conversation = conversations.find(c => c.patient?.id === initialPatientId);
+        
+        if (conversation) {
+          console.log('Found existing conversation:', conversation);
+          setSelectedConversation(conversation);
+        } else {
+          console.log('No conversation found, creating new one for patient:', initialPatientId);
+          // Create new conversation
+          const { data: newConv, error } = await supabase
+            .from('conversations')
+            .insert({
+              patient_id: initialPatientId,
+              doctor_id: profile.id,
+            })
+            .select()
+            .single();
+
+          if (error) {
+            console.error('Error creating conversation:', error);
+          } else if (newConv) {
+            // Reload conversations to include the new one
+            await loadConversations();
+          }
+        }
+      }, 500);
     }
-  }, [initialPatientId, conversations]);
+    
+    selectOrCreateConversation();
+  }, [initialPatientId, profile]);
 
   useEffect(() => {
     if (selectedConversation) {
@@ -251,12 +280,18 @@ export function DoctorMessaging({ initialCaseId, initialPatientId }: DoctorMessa
       // Get patient details and unread counts for each conversation
       const conversationsWithCounts = await Promise.all(
         (convData || []).map(async (conv: any) => {
-          // Get patient profile
-          const { data: patientData } = await supabase
+          // Get patient profile with avatar
+          const { data: patientData, error: patientError } = await supabase
             .from('user_profiles')
             .select('id, full_name, age, avatar')
             .eq('id', conv.patient_id)
             .single();
+
+          if (patientError) {
+            console.error('Error fetching patient:', patientError);
+          }
+
+          console.log('Patient data loaded:', patientData); // Debug log
 
           // Get unread count
           const { count } = await supabase

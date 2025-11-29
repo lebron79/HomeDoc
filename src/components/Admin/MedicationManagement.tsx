@@ -429,20 +429,37 @@ export function MedicationManagement() {
 
       {/* Add/Edit Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full my-8 max-h-[90vh] flex flex-col">
-            <div className="p-6 border-b border-gray-200 flex-shrink-0">
-              <h3 className="text-2xl font-bold text-gray-900">
-                {editingMed ? 'Edit Medication' : 'Add New Medication'}
-              </h3>
-            </div>
+        <>
+          <style>{`
+            .custom-scrollbar::-webkit-scrollbar {
+              width: 8px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+              background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+              border-radius: 10px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+              background: linear-gradient(to bottom, #3b82f6, #2563eb);
+              border-radius: 10px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+              background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+            }
+          `}</style>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
+            <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full h-[85vh] flex flex-col">
+              <div className="p-4 border-b border-gray-200 flex-shrink-0">
+                <h3 className="text-xl font-bold text-gray-900">
+                  {editingMed ? 'Edit Medication' : 'Add New Medication'}
+                </h3>
+              </div>
 
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
-              <div className="p-6">
-                <div className="grid md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                  <div className="grid md:grid-cols-2 gap-4">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Medication Name *
                   </label>
                   <input
@@ -450,13 +467,13 @@ export function MedicationManagement() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Manufacturer */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Manufacturer *
                   </label>
                   <input
@@ -464,20 +481,20 @@ export function MedicationManagement() {
                     required
                     value={formData.manufacturer}
                     onChange={(e) => setFormData({ ...formData, manufacturer: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Category *
                   </label>
                   <select
                     required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select Category</option>
                     {categories.map((cat) => (
@@ -490,14 +507,14 @@ export function MedicationManagement() {
 
                 {/* Dosage Form */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Dosage Form *
                   </label>
                   <select
                     required
                     value={formData.dosage_form}
                     onChange={(e) => setFormData({ ...formData, dosage_form: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select Form</option>
                     {dosageForms.map((form) => (
@@ -510,7 +527,7 @@ export function MedicationManagement() {
 
                 {/* Strength */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Strength *
                   </label>
                   <input
@@ -519,13 +536,13 @@ export function MedicationManagement() {
                     placeholder="e.g., 500mg, 10ml"
                     value={formData.strength}
                     onChange={(e) => setFormData({ ...formData, strength: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Price */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Price ($) *
                   </label>
                   <input
@@ -534,13 +551,13 @@ export function MedicationManagement() {
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Stock Quantity */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Stock Quantity *
                   </label>
                   <input
@@ -548,13 +565,13 @@ export function MedicationManagement() {
                     required
                     value={formData.stock_quantity}
                     onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Image URL */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Image URL (Optional)
                   </label>
                   <input
@@ -562,15 +579,15 @@ export function MedicationManagement() {
                     placeholder="https://example.com/image.jpg"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   {formData.image_url && (
-                    <div className="mt-3">
-                      <p className="text-xs text-gray-600 mb-2">Image Preview:</p>
+                    <div className="mt-2">
+                      <p className="text-xs text-gray-600 mb-1">Preview:</p>
                       <img 
                         src={formData.image_url} 
                         alt="Preview" 
-                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                        className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
@@ -581,53 +598,53 @@ export function MedicationManagement() {
 
                 {/* Description */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Description
                   </label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Active Ingredients */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Active Ingredients
                   </label>
                   <textarea
                     rows={2}
                     value={formData.active_ingredients}
                     onChange={(e) => setFormData({ ...formData, active_ingredients: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Side Effects */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Side Effects
                   </label>
                   <textarea
                     rows={2}
                     value={formData.side_effects}
                     onChange={(e) => setFormData({ ...formData, side_effects: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
                 {/* Warnings */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Warnings
                   </label>
                   <textarea
                     rows={2}
                     value={formData.warnings}
                     onChange={(e) => setFormData({ ...formData, warnings: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -642,7 +659,7 @@ export function MedicationManagement() {
                       }
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-700">Prescription Required</span>
+                    <span className="text-xs text-gray-700">Prescription Required</span>
                   </label>
                 </div>
 
@@ -656,24 +673,24 @@ export function MedicationManagement() {
                       }
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-700">Available for Sale</span>
+                    <span className="text-xs text-gray-700">Available for Sale</span>
                   </label>
                 </div>
               </div>
             </div>
 
               {/* Form Actions */}
-              <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50 sticky bottom-0">
+              <div className="flex gap-3 p-4 border-t border-gray-200 bg-gray-50 sticky bottom-0">
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                 >
                   {submitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <>
-                      <Save className="w-5 h-5" />
+                      <Save className="w-4 h-4" />
                       {editingMed ? 'Update' : 'Add'} Medication
                     </>
                   )}
@@ -682,15 +699,16 @@ export function MedicationManagement() {
                   type="button"
                   onClick={handleCancel}
                   disabled={submitting}
-                  className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-lg hover:bg-gray-300 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                   Cancel
                 </button>
               </div>
             </form>
           </div>
         </div>
+        </>
       )}
     </div>
   );
