@@ -136,6 +136,12 @@ export function DoctorMessaging({ initialCaseId, initialPatientId }: DoctorMessa
           setSelectedConversation(conversation);
         } else {
           console.log('No conversation found, creating new one for patient:', initialPatientId);
+          console.log('Current doctor profile:', profile);
+          console.log('Attempting to insert:', {
+            patient_id: initialPatientId,
+            doctor_id: profile.id,
+          });
+          
           // Create new conversation
           const { data: newConv, error } = await supabase
             .from('conversations')
@@ -148,6 +154,7 @@ export function DoctorMessaging({ initialCaseId, initialPatientId }: DoctorMessa
 
           if (error) {
             console.error('Error creating conversation:', error);
+            console.error('Full error details:', JSON.stringify(error, null, 2));
           } else if (newConv) {
             // Reload conversations to include the new one
             await loadConversations();
