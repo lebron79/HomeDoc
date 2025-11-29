@@ -19,6 +19,7 @@ import { PaymentCanceledPage } from './pages/PaymentCanceledPage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { AddMedicationPage } from './pages/AddMedicationPage';
+import { EditMedicationPage } from './pages/EditMedicationPage';
 import { HeartbeatLoader } from './components/Layout/HeartbeatLoader';
 import { CreateCaseForm } from './components/Patient/CreateCaseForm';
 import { PatientCasesList } from './components/Patient/PatientCasesList';
@@ -192,6 +193,16 @@ function AppContent() {
           element={
             <ProtectedRoute requiredRole="admin">
               <AddMedicationPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Edit Medication Route - Only for Admins */}
+        <Route
+          path="/admin/edit-medication/:id"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <EditMedicationPage />
             </ProtectedRoute>
           }
         />

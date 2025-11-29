@@ -151,27 +151,6 @@ export function MedicationManagement() {
     setFilteredMedications(filtered);
   };
 
-  const handleEdit = (medication: Medication) => {
-    setEditingMed(medication);
-    setFormData({
-      name: medication.name,
-      description: medication.description || '',
-      category: medication.category || '',
-      manufacturer: medication.manufacturer || '',
-      price: medication.price.toString(),
-      stock_quantity: medication.stock_quantity.toString(),
-      image_url: medication.image_url || '',
-      dosage_form: medication.dosage_form || '',
-      strength: medication.strength || '',
-      prescription_required: medication.prescription_required,
-      active_ingredients: medication.active_ingredients || '',
-      side_effects: medication.side_effects || '',
-      warnings: medication.warnings || '',
-      is_available: medication.is_available,
-    });
-    setShowForm(true);
-  };
-
   const handleDelete = async (medication: Medication) => {
     if (!confirm(`Are you sure you want to delete ${medication.name}?`)) return;
 
@@ -410,7 +389,7 @@ export function MedicationManagement() {
                   </td>
                   <td className="px-6 py-4 space-x-2">
                     <button
-                      onClick={() => handleEdit(med)}
+                      onClick={() => navigate(`/admin/edit-medication/${med.id}`)}
                       className="text-blue-600 hover:text-blue-900 transition-colors"
                     >
                       <Edit className="w-5 h-5" />
