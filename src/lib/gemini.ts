@@ -1,10 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAnkmthgBT57AueLY5jN5b0tTbTXjDybqs';
-const GEMINI_MODEL = 'gemini-2.0-flash';  // Using the gemini-2.0-flash model
-
-// Initialize the Gemini API client
-const genAI = new GoogleGenerativeAI(API_KEY);
+// Using Grok API instead of Gemini
+const GROK_API_KEY = import.meta.env.VITE_GROK_API_KEY || '';
+const GROK_MODEL = 'llama-3.3-70b-versatile';
+const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
 
 export interface GeminiResponse {
   diagnosis: string;
@@ -15,8 +12,36 @@ export interface GeminiResponse {
   additionalNotes?: string;
 }
 
+/**
+ * Helper function to call Grok API
+ */
+async function callGrokAPI(messages: Array<{role: string; content: string}>, temperature: number = 0.7, maxTokens: number = 1024): Promise<string> {
+  const response = await fetch(GROK_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${GROK_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: GROK_MODEL,
+      messages: messages,
+      temperature: temperature,
+      max_tokens: maxTokens,
+      stream: false
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Grok API error: ${response.status} - ${error}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
 /** 
- * Analyzes patient symptoms using the Gemini AI model to provide medical assessment
+ * Analyzes patient symptoms using the Grok AI model to provide medical assessment
  * @param symptoms - Description of patient symptoms
  * @param severity - Patient-reported severity level
  * @returns Promise<GeminiResponse> containing AI-generated medical assessment
@@ -31,17 +56,6 @@ export async function analyzeSymptomsWithGemini(
   }
 
   try {
-    // Initialize the model with specific configuration
-    const model = genAI.getGenerativeModel({
-      model: GEMINI_MODEL,
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.8,
-        topK: 40,
-        maxOutputTokens: 1024,
-      },
-    });
-
     const prompt = `
 You are a medical AI assistant. Analyse the following patient symptoms and provide a professional medical assessment.
 
@@ -72,9 +86,9 @@ Guidelines:
 Important: This is for informational purposes only and should not replace professional medical advice.
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = await callGrokAPI([
+      { role: 'user', content: prompt }
+    ], 0.7, 1024);
 
     // ---- JSON extraction ----
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -102,7 +116,7 @@ Important: This is for informational purposes only and should not replace profes
       additionalNotes: 'Please consult a healthcare provider for proper diagnosis and treatment.',
     };
   } catch (error) {
-    console.error('Error analyzing symptoms with Gemini API:', error);
+    console.error('Error analyzing symptoms with Grok API:', error);
 
     // If it's a specific API error, provide more context
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -121,7 +135,7 @@ Important: This is for informational purposes only and should not replace profes
 }
 
 /** 
- * General health advice helper using Gemini AI
+ * General health advice helper using Grok AI
  * @param question - The health-related question to be answered
  * @returns Promise<string> containing the AI-generated health advice
  * @throws Error if API call fails or question is invalid
@@ -132,11 +146,6 @@ export async function getHealthAdviceWithGemini(question: string): Promise<strin
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: GEMINI_MODEL,
-      generationConfig: { temperature: 0.6, maxOutputTokens: 500 },
-    });
-
     const prompt = `
 You are a helpful medical AI assistant. Provide helpful, accurate health advice for the following question.
 
@@ -154,11 +163,13 @@ Guidelines:
 Response should be 2-3 paragraphs maximum.
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
+    const text = await callGrokAPI([
+      { role: 'user', content: prompt }
+    ], 0.6, 500);
+    
+    return text;
   } catch (error) {
-    console.error('Error calling Gemini API for health advice:', error);
+    console.error('Error calling Grok API for health advice:', error);
     return (
       "I apologise, but I'm unable to provide health advice at the moment. " +
       'Please consult with a healthcare provider for proper medical guidance.'
@@ -167,7 +178,7 @@ Response should be 2-3 paragraphs maximum.
 }
 
 /** 
- * Generate a smart, contextual title for a conversation using Gemini AI
+ * Generate a smart, contextual title for a conversation using Grok AI
  * @param conversationText - Full conversation in text format
  * @returns Promise<string> containing the AI-generated conversation title
  * @throws Error if API call fails
@@ -178,14 +189,6 @@ export async function generateConversationTitle(conversationText: string): Promi
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: GEMINI_MODEL,
-      generationConfig: { 
-        temperature: 0.5, 
-        maxOutputTokens: 50,
-      },
-    });
-
     const prompt = `
 Based on the following medical conversation, generate a short, descriptive title (maximum 6-8 words) that captures the main health concern or topic discussed.
 
@@ -210,9 +213,11 @@ Examples of good titles:
 Generate only the title, nothing else.
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const title = response.text().trim().replace(/["']/g, '');
+    const text = await callGrokAPI([
+      { role: 'user', content: prompt }
+    ], 0.5, 50);
+    
+    const title = text.trim().replace(/["']/g, '');
     
     // Ensure title is not too long
     if (title.length > 60) {
@@ -221,7 +226,7 @@ Generate only the title, nothing else.
     
     return title || 'Health Consultation';
   } catch (error) {
-    console.error('Error generating conversation title with Gemini:', error);
+    console.error('Error generating conversation title with Grok:', error);
     // Fallback to a generic title
     return 'Health Consultation';
   }
