@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA5wY66oPqGyCvXmUW6oOb6YWsYxzzT9mY';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyDCXmnZFtsjZ26TqiUbxq_7dxNWz-b0NvE';
 const GEMINI_MODEL = 'gemini-2.0-flash';  // Using the gemini-2.0-flash model
 
 
