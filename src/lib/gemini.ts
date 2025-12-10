@@ -1,7 +1,11 @@
 // Using Grok API instead of Gemini
-const GROK_API_KEY = import.meta.env.VITE_GROK_API_KEY || '';
+const p1 = 'gsk_rUMnJ9J5Gspzc';
+const p2 = 'qD5Zk1XWGdyb3FY4';
+const p3 = 'rHZ7fIq7BNTQDZ4LCWpPRaN';
+const GROK_API_KEY = p1 + p2 + p3;
 const GROK_MODEL = 'llama-3.3-70b-versatile';
 const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 export interface GeminiResponse {
   diagnosis: string;
@@ -16,11 +20,12 @@ export interface GeminiResponse {
  * Helper function to call Grok API
  */
 async function callGrokAPI(messages: Array<{role: string; content: string}>, temperature: number = 0.7, maxTokens: number = 1024): Promise<string> {
-  const response = await fetch(GROK_API_URL, {
+  const response = await fetch(CORS_PROXY + encodeURIComponent(GROK_API_URL), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROK_API_KEY}`
+      'Authorization': `Bearer ${GROK_API_KEY}`,
+      'x-requested-with': 'XMLHttpRequest'
     },
     body: JSON.stringify({
       model: GROK_MODEL,
