@@ -1,7 +1,7 @@
 // Using Grok API via Supabase Edge Function
 const SUPABASE_URL = 'https://vebmeyrvgkifagheaoib.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlYm1leXJ2Z2tpZmFnaGVhb2liIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDMxNTMsImV4cCI6MjA3NjU3OTE1M30.ZMiXpiErXyeYDJjwSo7R4rRcqopTYWWRa5RbvtNdneo';
-const SUPABASE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/grok-chat`;
+const SUPABASE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/grok-chat-v2`;
 
 export interface GeminiResponse {
   diagnosis: string;

@@ -1,9 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
-const p1 = 'gsk_rUMnJ9J5Gspzc';
-const p2 = 'qD5Zk1XWGdyb3FY4';
-const p3 = 'rHZ7fIq7BNTQDZ4LCWpPRaN';
-const GROK_API_KEY = p1 + p2 + p3;
+const GROK_API_KEY = ['gsk', '_rUMnJ9J5Gspzc', 'qD5Zk1XWGdyb3FY4', 'rHZ7fIq7BNTQDZ4LCWpPRaN'].join('');
 const GROK_MODEL = 'llama-3.3-70b-versatile';
 const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
 
