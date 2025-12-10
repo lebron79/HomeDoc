@@ -1,10 +1,7 @@
-// Using Grok API instead of Gemini
-const p1 = 'gsk_rUMnJ9J5Gspzc';
-const p2 = 'qD5Zk1XWGdyb3FY4';
-const p3 = 'rHZ7fIq7BNTQDZ4LCWpPRaN';
-const GROK_API_KEY = p1 + p2 + p3;
-const GROK_MODEL = 'llama-3.3-70b-versatile';
-const GROK_API_URL = 'https://api.x.ai/v1/chat/completions';
+// Using Grok API via Supabase Edge Function
+const SUPABASE_URL = 'https://vebmeyrvgkifagheaoib.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlYm1leXJ2Z2tpZmFnaGVhb2liIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDMxNTMsImV4cCI6MjA3NjU3OTE1M30.ZMiXpiErXyeYDJjwSo7R4rRcqopTYWWRa5RbvtNdneo';
+const SUPABASE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/grok-chat`;
 
 export interface GeminiResponse {
   diagnosis: string;
@@ -16,24 +13,19 @@ export interface GeminiResponse {
 }
 
 /**
- * Helper function to call Grok API
+ * Helper function to call Grok API via Supabase Edge Function
  */
 async function callGrokAPI(messages: Array<{role: string; content: string}>, temperature: number = 0.7, maxTokens: number = 1024): Promise<string> {
-  // Use allorigins.win as CORS proxy - more reliable than corsproxy.io
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(GROK_API_URL)}`;
-  
-  const response = await fetch(proxyUrl, {
+  const response = await fetch(SUPABASE_FUNCTION_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROK_API_KEY}`
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
     },
     body: JSON.stringify({
-      model: GROK_MODEL,
       messages: messages,
       temperature: temperature,
-      max_tokens: maxTokens,
-      stream: false
+      max_tokens: maxTokens
     })
   });
 
@@ -43,7 +35,7 @@ async function callGrokAPI(messages: Array<{role: string; content: string}>, tem
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  return data.content;
 }
 
 /** 
