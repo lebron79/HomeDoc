@@ -26,6 +26,7 @@ import { CreateCaseForm } from './components/Patient/CreateCaseForm';
 import { PatientCasesList } from './components/Patient/PatientCasesList';
 import { DoctorCasesList } from './components/Doctor/DoctorCasesList';
 import { DiseasePrediction } from './components/Patient/DiseasePrediction';
+import { SmartSymptomForm } from './components/Patient/SmartSymptomForm';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 
@@ -346,9 +347,7 @@ function AppContent() {
           path="/disease-prediction"
           element={
             <ProtectedRoute>
-              <DashboardLayout role={profile?.role}>
-                <DiseasePrediction />
-              </DashboardLayout>
+              <SmartSymptomForm />
             </ProtectedRoute>
           }
         />
