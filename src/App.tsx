@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage';
 import CommonDiseasesPage from './pages/CommonDiseasesPage';
 import HistoryPage from './pages/HistoryPage';
 import HealthAssessmentPage from './pages/HealthAssessmentPage';
+import { HealthAssessment } from './components/Patient/HealthAssessmentForm';
 import { MedicationStore } from './pages/MedicationStorePage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { PaymentCanceledPage } from './pages/PaymentCanceledPage';
@@ -24,6 +25,7 @@ import { HeartbeatLoader } from './components/Layout/HeartbeatLoader';
 import { CreateCaseForm } from './components/Patient/CreateCaseForm';
 import { PatientCasesList } from './components/Patient/PatientCasesList';
 import { DoctorCasesList } from './components/Doctor/DoctorCasesList';
+import { DiseasePrediction } from './components/Patient/DiseasePrediction';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 
@@ -335,6 +337,18 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <HealthAssessmentPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Disease Prediction - AI Model Test */}
+        <Route
+          path="/disease-prediction"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout role={profile?.role}>
+                <DiseasePrediction />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .result h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .disease-name {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .confidence {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .example h3 {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .example p {
+            color: #666;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Disease Prediction System</h1>
+        <p class="subtitle">Describe your symptoms and get an AI-powered diagnosis</p>
+
+        <form id="predictionForm">
+            <label for="symptoms">Enter Your Symptoms:</label>
+            <textarea 
+                id="symptoms" 
+                name="symptoms" 
+                placeholder="Example: I have fever, headache, and body aches..."
+                required
+            ></textarea>
+
+            <button type="submit">Predict Disease</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <p>🔍 Analyzing symptoms...</p>
+        </div>
+
+        <div class="result" id="result">
+            <h2>Prediction Result:</h2>
+            <div class="disease-name" id="diseaseName"></div>
+            <div class="confidence" id="confidence"></div>
+        </div>
+
+        <div class="example">
+            <h3>💡 Example Symptoms:</h3>
+            <p>• "I have skin rash on my arms and legs with itching"<br>
+               • "I have high fever with chills and sweating"<br>
+               • "I experience severe headache with nausea"</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const symptoms = document.getElementById('symptoms').value;
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
+
+            // Show loading
+            loading.style.display = 'block';
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ symptoms: symptoms })
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                loading.style.display = 'none';
+
+                if (data.success) {
+                    document.getElementById('diseaseName').textContent = data.disease;
+
+                    if (data.confidence) {
+                        document.getElementById('confidence').textContent = 
+                            `Confidence: ${data.confidence.toFixed(2)}%`;
+                    } else {
+                        document.getElementById('confidence').textContent = '';
+                    }
+
+                    resultDiv.className = 'result success';
+                    resultDiv.style.display = 'block';
+                } else {
+                    document.getElementById('diseaseName').textContent = 'Error: ' + data.error;
+                    document.getElementById('confidence').textContent = '';
+                    resultDiv.className = 'result error';
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                document.getElementById('diseaseName').textContent = 'Error connecting to server';
+                document.getElementById('confidence').textContent = '';
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
