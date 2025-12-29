@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
 import os
@@ -24,7 +24,14 @@ def health():
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return jsonify({
+        'service': 'HomeDoc Disease Prediction API',
+        'status': 'running',
+        'endpoints': {
+            '/health': 'GET - Health check',
+            '/predict': 'POST - Predict disease from symptoms'
+        }
+    })
 
 @app.route('/predict', methods=['POST'])
 def predict():
