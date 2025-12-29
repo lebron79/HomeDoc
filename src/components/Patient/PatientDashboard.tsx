@@ -468,7 +468,7 @@ export function PatientDashboard() {
 
                   {/* Comprehensive Health Assessment */}
                   <button
-                    onClick={() => setShowHealthAssessment(true)}
+                    onClick={() => navigate('/disease-prediction')}
                     className="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-500 p-6 rounded-xl text-left transition-all hover:shadow-2xl hover:scale-105 active:scale-95"
                   >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>

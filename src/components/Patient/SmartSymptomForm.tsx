@@ -1,5 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { predictDisease, PredictionResult } from '../../lib/diseaseApi';
+import { Navbar } from '../Layout/Navbar';
+import { Footer } from '../Layout/Footer';
+import { ParticlesBackground } from '../Layout/ParticlesBackground';
 import { 
   ChevronRight, 
   ChevronLeft,
@@ -16,7 +20,8 @@ import {
   Wind,
   Zap,
   Moon,
-  User
+  User,
+  ArrowLeft
 } from 'lucide-react';
 
 // Step definitions
@@ -87,6 +92,7 @@ const chronicConditionOptions = [
 ];
 
 export function SmartSymptomForm() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [result, setResult] = useState<PredictionResult | null>(null);
@@ -214,33 +220,50 @@ export function SmartSymptomForm() {
   const progress = ((currentStep - 1) / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
-            <Stethoscope className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Smart Health Assessment
-          </h1>
-          <p className="text-gray-600">
-            Answer a few questions to get an AI-powered health prediction
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      {/* Particles Background */}
+      <ParticlesBackground />
+      
+      {/* Navbar */}
+      <Navbar />
+      
+      {/* Main Content */}
+      <div className="relative z-10 py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-6 transition-colors group"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span>Back to Dashboard</span>
+          </button>
 
-        {/* Progress Bar */}
-        {currentStep <= totalSteps && (
-          <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>Step {currentStep} of {totalSteps}</span>
-              <span>{Math.round(progress)}% complete</span>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4 shadow-lg animate-pulse">
+              <Stethoscope className="w-8 h-8 text-white" />
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              />
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Smart Health Assessment
+            </h1>
+            <p className="text-gray-600">
+              Answer a few questions to get an AI-powered health prediction
+            </p>
+          </div>
+
+          {/* Progress Bar */}
+          {currentStep <= totalSteps && (
+            <div className="mb-8">
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Step {currentStep} of {totalSteps}</span>
+                <span>{Math.round(progress)}% complete</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
             </div>
           </div>
         )}
@@ -609,9 +632,10 @@ export function SmartSymptomForm() {
                       Start New Assessment
                     </button>
                     <button
-                      onClick={() => window.location.href = '/#/create-case'}
-                      className="flex-1 py-3 px-6 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
+                      onClick={() => navigate('/create-case')}
+                      className="flex-1 py-3 px-6 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center gap-2"
                     >
+                      <Stethoscope className="w-5 h-5" />
                       Consult a Doctor
                     </button>
                   </div>
@@ -693,7 +717,11 @@ export function SmartSymptomForm() {
             ))}
           </div>
         )}
+        </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
