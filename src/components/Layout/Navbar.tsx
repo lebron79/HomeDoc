@@ -1,6 +1,7 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../contexts/NotificationContext';
-import { LogOut, User, Home, Stethoscope, UserCheck, Pill, ChevronDown, Settings, ShoppingCart, Package, Bell, Shield } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { LogOut, User, Home, Stethoscope, UserCheck, Pill, ChevronDown, Settings, ShoppingCart, Package, Bell, Shield, Moon, Sun } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import logo from '../../assets/logo.png';
 import { Link, useNavigate } from 'react-router-dom';
@@ -60,6 +61,7 @@ const AVATAR_OPTIONS = [
 
 export function Navbar() {
   const { profile, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -144,13 +146,13 @@ export function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <img src={logo} alt="HomeDoc Logo" className="w-20 h-20" />
-            <span className="text-2xl font-bold text-gray-900">HomeDoc</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">HomeDoc</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -159,7 +161,7 @@ export function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 to="/"
-                className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <Home className="w-4 h-4" />
                 <span className="text-sm font-medium">Home</span>
@@ -183,7 +185,7 @@ export function Navbar() {
                     navigate(dashboardPath);
                   }
                 }}
-                className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <UserCheck className="w-4 h-4" />
                 <span className="text-sm font-medium">Dashboard</span>
@@ -191,7 +193,7 @@ export function Navbar() {
               
               <Link
                 to="/health-assessment"
-                className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50"
+                className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <Stethoscope className="w-4 h-4" />
                 <span className="text-sm font-medium">Health Assessment</span>
@@ -201,7 +203,7 @@ export function Navbar() {
                 <>
                   <Link
                     to="/medications"
-                    className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors rounded-lg hover:bg-gray-50"
+                    className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <Pill className="w-4 h-4" />
                     <span className="text-sm font-medium">Medications</span>
@@ -358,17 +360,17 @@ export function Navbar() {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="absolute right-0 mt-2 w-56 origin-top-right bg-white dark:bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none">
                     <div className="py-1">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-semibold text-gray-900">{profile.full_name}</p>
-                        <p className="text-sm text-gray-500 truncate">{profile.email}</p>
+                      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">{profile.full_name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{profile.email}</p>
                       </div>
                       <div className="py-1">
                         <Link 
                           to="/profile" 
                           onClick={() => setShowProfileMenu(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <div className="flex items-center gap-2">
                             <User className="w-4 h-4" />
@@ -378,17 +380,33 @@ export function Navbar() {
                         <Link 
                           to="/settings" 
                           onClick={() => setShowProfileMenu(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <div className="flex items-center gap-2">
                             <Settings className="w-4 h-4" />
                             Settings
                           </div>
                         </Link>
+                        <button
+                          onClick={() => {
+                            toggleTheme();
+                          }}
+                          className="w-full text-left block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                            </div>
+                            <div className={`w-8 h-4 rounded-full transition-colors ${theme === 'dark' ? 'bg-[#81171b]' : 'bg-gray-300'}`}>
+                              <div className={`w-3 h-3 rounded-full bg-white mt-0.5 transition-transform ${theme === 'dark' ? 'translate-x-4 ml-0.5' : 'translate-x-0.5'}`}></div>
+                            </div>
+                          </div>
+                        </button>
                         <Link 
                           to="/order-history" 
                           onClick={() => setShowProfileMenu(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <div className="flex items-center gap-2">
                             <Package className="w-4 h-4" />
@@ -396,13 +414,13 @@ export function Navbar() {
                           </div>
                         </Link>
                       </div>
-                      <div className="py-1 border-t border-gray-100">
+                      <div className="py-1 border-t border-gray-100 dark:border-gray-700">
                         <button
                           onClick={() => {
                             handleSignOut();
                             setShowProfileMenu(false);
                           }}
-                          className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          className="w-full text-left flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Sign Out</span>

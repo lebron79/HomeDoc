@@ -2,6 +2,7 @@ import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'reac
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { Navbar } from './components/Layout/Navbar';
 import { NotificationToast } from './components/Notifications/NotificationToast';
 import { PageSEO } from './components/SEO';
@@ -32,6 +33,7 @@ const PatientCasesList = lazy(() => import('./components/Patient/PatientCasesLis
 const DoctorCasesList = lazy(() => import('./components/Doctor/DoctorCasesList').then(m => ({ default: m.DoctorCasesList })));
 const DiseasePrediction = lazy(() => import('./components/Patient/DiseasePrediction').then(m => ({ default: m.DiseasePrediction })));
 const SmartSymptomForm = lazy(() => import('./components/Patient/SmartSymptomForm').then(m => ({ default: m.SmartSymptomForm })));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
 // Suspense wrapper for lazy components
 const LazyComponent = ({ children }: { children: React.ReactNode }) => (
@@ -105,7 +107,7 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode;
 // Dashboard Layout Component
 function DashboardLayout({ children, role }: { children: React.ReactNode; role?: string }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar />
       <main>
         {children}
@@ -360,6 +362,16 @@ function AppContent() {
           }
         />
 
+        {/* Settings Page */}
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Disease Prediction - AI Model Test */}
         <Route
           path="/disease-prediction"
@@ -389,12 +401,14 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <NotificationToast />
-          <AppContent />
-        </NotificationProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <NotificationToast />
+            <AppContent />
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </HelmetProvider>
   );
 }
