@@ -2,35 +2,43 @@ import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'reac
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { AuthPage } from './components/Auth/AuthPage';
-import { PatientDashboard } from './components/Patient/PatientDashboard';
-import { DoctorDashboard } from './components/Doctor/DoctorDashboard';
-import { AdminDashboard } from './components/Admin/AdminDashboard';
-import { LandingPage } from './components/LandingPage';
 import { Navbar } from './components/Layout/Navbar';
 import { NotificationToast } from './components/Notifications/NotificationToast';
 import { PageSEO } from './components/SEO';
-import MedicationsPage from './pages/MedicationsPage';
-import ProfilePage from './pages/ProfilePage';
-import CommonDiseasesPage from './pages/CommonDiseasesPage';
-import HistoryPage from './pages/HistoryPage';
-import HealthAssessmentPage from './pages/HealthAssessmentPage';
-import { HealthAssessment } from './components/Patient/HealthAssessmentForm';
-import { MedicationStore } from './pages/MedicationStorePage';
-import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
-import { PaymentCanceledPage } from './pages/PaymentCanceledPage';
-import { OrderHistoryPage } from './pages/OrderHistoryPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { AddMedicationPage } from './pages/AddMedicationPage';
-import { EditMedicationPage } from './pages/EditMedicationPage';
 import { HeartbeatLoader } from './components/Layout/HeartbeatLoader';
-import { CreateCaseForm } from './components/Patient/CreateCaseForm';
-import { PatientCasesList } from './components/Patient/PatientCasesList';
-import { DoctorCasesList } from './components/Doctor/DoctorCasesList';
-import { DiseasePrediction } from './components/Patient/DiseasePrediction';
-import { SmartSymptomForm } from './components/Patient/SmartSymptomForm';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { supabase } from './lib/supabase';
+
+// Lazy load components for better initial load performance
+const AuthPage = lazy(() => import('./components/Auth/AuthPage').then(m => ({ default: m.AuthPage })));
+const PatientDashboard = lazy(() => import('./components/Patient/PatientDashboard').then(m => ({ default: m.PatientDashboard })));
+const DoctorDashboard = lazy(() => import('./components/Doctor/DoctorDashboard').then(m => ({ default: m.DoctorDashboard })));
+const AdminDashboard = lazy(() => import('./components/Admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const LandingPage = lazy(() => import('./components/LandingPage').then(m => ({ default: m.LandingPage })));
+const MedicationsPage = lazy(() => import('./pages/MedicationsPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const CommonDiseasesPage = lazy(() => import('./pages/CommonDiseasesPage'));
+const HistoryPage = lazy(() => import('./pages/HistoryPage'));
+const HealthAssessmentPage = lazy(() => import('./pages/HealthAssessmentPage'));
+const MedicationStore = lazy(() => import('./pages/MedicationStorePage').then(m => ({ default: m.MedicationStore })));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage').then(m => ({ default: m.PaymentSuccessPage })));
+const PaymentCanceledPage = lazy(() => import('./pages/PaymentCanceledPage').then(m => ({ default: m.PaymentCanceledPage })));
+const OrderHistoryPage = lazy(() => import('./pages/OrderHistoryPage').then(m => ({ default: m.OrderHistoryPage })));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
+const AddMedicationPage = lazy(() => import('./pages/AddMedicationPage').then(m => ({ default: m.AddMedicationPage })));
+const EditMedicationPage = lazy(() => import('./pages/EditMedicationPage').then(m => ({ default: m.EditMedicationPage })));
+const CreateCaseForm = lazy(() => import('./components/Patient/CreateCaseForm').then(m => ({ default: m.CreateCaseForm })));
+const PatientCasesList = lazy(() => import('./components/Patient/PatientCasesList').then(m => ({ default: m.PatientCasesList })));
+const DoctorCasesList = lazy(() => import('./components/Doctor/DoctorCasesList').then(m => ({ default: m.DoctorCasesList })));
+const DiseasePrediction = lazy(() => import('./components/Patient/DiseasePrediction').then(m => ({ default: m.DiseasePrediction })));
+const SmartSymptomForm = lazy(() => import('./components/Patient/SmartSymptomForm').then(m => ({ default: m.SmartSymptomForm })));
+
+// Suspense wrapper for lazy components
+const LazyComponent = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<HeartbeatLoader />}>
+    {children}
+  </Suspense>
+);
 
 // Landing Page Wrapper to use navigation
 function LandingPageWrapper() {
@@ -58,13 +66,21 @@ function LandingPageWrapper() {
     }
   }, [navigate]);
   
-  return <LandingPage onGetStarted={() => navigate('/login')} />;
+  return (
+    <LazyComponent>
+      <LandingPage onGetStarted={() => navigate('/login')} />
+    </LazyComponent>
+  );
 }
 
 // Auth Page Wrapper to use navigation
 function AuthPageWrapper() {
   const navigate = useNavigate();
-  return <AuthPage onBack={() => navigate('/')} />;
+  return (
+    <LazyComponent>
+      <AuthPage onBack={() => navigate('/')} />
+    </LazyComponent>
+  );
 }
 
 // Protected Route Component
