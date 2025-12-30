@@ -3,6 +3,7 @@ import { ContactDoctorForm } from './ContactDoctorForm';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { ParticlesBackground } from '../Layout/ParticlesBackground';
+import { checkApiHealth } from '../../lib/diseaseApi';
 
 interface Diagnosis {
   id: string;
@@ -60,6 +61,18 @@ export function PatientDashboard() {
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [conversationRefreshTrigger, setConversationRefreshTrigger] = useState(0);
   const [recentCases, setRecentCases] = useState<any[]>([]);
+
+  // Pre-warm the Render.com disease prediction API (it sleeps after 15min inactivity)
+  useEffect(() => {
+    // Fire and forget - silently wake up the API in background
+    checkApiHealth().then(isHealthy => {
+      if (isHealthy) {
+        console.log('🔥 Disease prediction API is awake and ready!');
+      } else {
+        console.log('⏳ Disease prediction API is waking up...');
+      }
+    });
+  }, []); // Run once on mount
 
   useEffect(() => {
     const loadAllData = async () => {

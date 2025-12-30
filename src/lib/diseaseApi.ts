@@ -1,7 +1,7 @@
 // Disease Prediction API Service
 // Deployed on Render.com
 
-const API_URL = 'https://homedoc-disease-api.onrender.com';
+const API_URL = import.meta.env.VITE_DISEASE_API_URL || 'https://homedoc-disease-api.onrender.com';
 
 export interface PredictionResult {
   success: boolean;
