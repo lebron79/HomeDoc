@@ -161,12 +161,12 @@ $$;
 -- Function for doctors to get pending predictions
 CREATE OR REPLACE FUNCTION get_pending_predictions(p_limit INT DEFAULT 20, p_offset INT DEFAULT 0)
 RETURNS TABLE(
-    id UUID,
+    prediction_id UUID,
     symptoms TEXT,
     predicted_disease VARCHAR(255),
     confidence DECIMAL(5, 2),
     patient_name VARCHAR(255),
-    created_at TIMESTAMPTZ
+    prediction_created_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -175,19 +175,19 @@ BEGIN
     -- Check if user is doctor or admin
     IF NOT EXISTS (
         SELECT 1 FROM user_profiles
-        WHERE id = auth.uid() AND role IN ('doctor', 'admin')
+        WHERE user_profiles.id = auth.uid() AND user_profiles.role IN ('doctor', 'admin')
     ) THEN
         RAISE EXCEPTION 'Access denied: Doctors and Admins only';
     END IF;
 
     RETURN QUERY
     SELECT 
-        dp.id,
+        dp.id AS prediction_id,
         dp.symptoms,
         dp.predicted_disease,
         dp.confidence,
-        COALESCE(up.full_name, 'Anonymous')::VARCHAR(255) as patient_name,
-        dp.created_at
+        COALESCE(up.full_name, 'Anonymous')::VARCHAR(255) AS patient_name,
+        dp.created_at AS prediction_created_at
     FROM disease_predictions dp
     LEFT JOIN user_profiles up ON dp.user_id = up.id
     WHERE dp.reviewed_at IS NULL

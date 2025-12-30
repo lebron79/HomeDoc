@@ -153,7 +153,15 @@ export async function getPendingPredictions(limit = 20, offset = 0): Promise<Pen
       return [];
     }
 
-    return data || [];
+    // Map the renamed columns back to the expected format
+    return (data || []).map((item: any) => ({
+      id: item.prediction_id,
+      symptoms: item.symptoms,
+      predicted_disease: item.predicted_disease,
+      confidence: item.confidence,
+      patient_name: item.patient_name,
+      created_at: item.prediction_created_at,
+    }));
   } catch (error) {
     console.error('Error fetching pending predictions:', error);
     return [];
