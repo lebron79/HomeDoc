@@ -21,6 +21,7 @@ import landimg from "../assets/landing.jpg";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "./Layout/Footer";
+import { PageSEO } from "./SEO";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -50,7 +51,9 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50">
+    <>
+      <PageSEO.Home />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-lg border-b border-blue-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -712,5 +715,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
       <Footer />
     </div>
+    </>
   );
 }

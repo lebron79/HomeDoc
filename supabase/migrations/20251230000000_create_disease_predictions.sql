@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS disease_predictions (
 );
 
 -- Create indexes for better query performance
-CREATE INDEX idx_disease_predictions_user_id ON disease_predictions(user_id);
-CREATE INDEX idx_disease_predictions_reviewed_by ON disease_predictions(reviewed_by);
-CREATE INDEX idx_disease_predictions_created_at ON disease_predictions(created_at DESC);
-CREATE INDEX idx_disease_predictions_is_correct ON disease_predictions(is_correct);
-CREATE INDEX idx_disease_predictions_pending_review ON disease_predictions(reviewed_at) WHERE reviewed_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_disease_predictions_user_id ON disease_predictions(user_id);
+CREATE INDEX IF NOT EXISTS idx_disease_predictions_reviewed_by ON disease_predictions(reviewed_by);
+CREATE INDEX IF NOT EXISTS idx_disease_predictions_created_at ON disease_predictions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_disease_predictions_is_correct ON disease_predictions(is_correct);
+CREATE INDEX IF NOT EXISTS idx_disease_predictions_pending_review ON disease_predictions(reviewed_at) WHERE reviewed_at IS NULL;
 
 -- Enable RLS
 ALTER TABLE disease_predictions ENABLE ROW LEVEL SECURITY;

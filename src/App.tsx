@@ -1,4 +1,5 @@
 import { HashRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthPage } from './components/Auth/AuthPage';
@@ -8,6 +9,7 @@ import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { LandingPage } from './components/LandingPage';
 import { Navbar } from './components/Layout/Navbar';
 import { NotificationToast } from './components/Notifications/NotificationToast';
+import { PageSEO } from './components/SEO';
 import MedicationsPage from './pages/MedicationsPage';
 import ProfilePage from './pages/ProfilePage';
 import CommonDiseasesPage from './pages/CommonDiseasesPage';
@@ -370,12 +372,14 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <NotificationProvider>
-        <NotificationToast />
-        <AppContent />
-      </NotificationProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <NotificationProvider>
+          <NotificationToast />
+          <AppContent />
+        </NotificationProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

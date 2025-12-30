@@ -1,0 +1,17 @@
+# robots.txt for HomeDoc
+# https://lebron79.github.io/HomeDoc/
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://lebron79.github.io/HomeDoc/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow admin and auth pages from indexing
+Disallow: /admin
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /confirm-email
