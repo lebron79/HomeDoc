@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { predictDisease, PredictionResult } from '../../lib/diseaseApi';
+import { useAuth } from '../../contexts/AuthContext';
 import { Navbar } from '../Layout/Navbar';
 import { Footer } from '../Layout/Footer';
 import { ParticlesBackground } from '../Layout/ParticlesBackground';
@@ -93,6 +94,7 @@ const chronicConditionOptions = [
 
 export function SmartSymptomForm() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [result, setResult] = useState<PredictionResult | null>(null);
@@ -204,7 +206,8 @@ export function SmartSymptomForm() {
     const symptomText = buildSymptomText();
     console.log('Sending to API:', symptomText);
     
-    const prediction = await predictDisease(symptomText);
+    // Pass user ID to save prediction for doctor review
+    const prediction = await predictDisease(symptomText, user?.id);
     setResult(prediction);
     setLoading(false);
     setCurrentStep(6); // Results step

@@ -18,11 +18,13 @@ import {
   Phone as PhoneIcon,
   Package,
   ShoppingCart,
-  DollarSign
+  DollarSign,
+  Brain
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { MedicationManagement } from './MedicationManagement';
 import { OrderHistory } from './OrderHistory';
+import { ModelFeedbackDashboard } from './ModelFeedbackDashboard';
 
 interface Statistics {
   totalPatients: number;
@@ -48,7 +50,7 @@ interface UserProfile {
   created_at: string;
 }
 
-type ViewMode = 'dashboard' | 'manage-users' | 'medications' | 'orders';
+type ViewMode = 'dashboard' | 'manage-users' | 'medications' | 'orders' | 'model-feedback';
 type UserFilter = 'all' | 'patients' | 'doctors' | 'suspended';
 
 export function AdminDashboard() {
@@ -295,6 +297,7 @@ export function AdminDashboard() {
                 {viewMode === 'manage-users' && '👥 Manage users and accounts'}
                 {viewMode === 'medications' && '💊 Manage medication inventory'}
                 {viewMode === 'orders' && '📦 View and manage orders'}
+                {viewMode === 'model-feedback' && '🤖 AI Model performance feedback'}
               </p>
             </div>
           </div>
@@ -355,6 +358,20 @@ export function AdminDashboard() {
               <ShoppingCart className="w-5 h-5 inline-block mr-2 relative z-10" />
               <span className="relative z-10">Orders & Revenue</span>
             </button>
+            <button
+              onClick={() => setViewMode('model-feedback')}
+              className={`group relative px-6 py-3.5 rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
+                viewMode === 'model-feedback'
+                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-xl shadow-violet-500/50 scale-105'
+                  : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-lg hover:scale-105 border border-violet-100'
+              }`}
+            >
+              {viewMode === 'model-feedback' && (
+                <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-purple-400 opacity-0 group-hover:opacity-30 transition-opacity"></div>
+              )}
+              <Brain className="w-5 h-5 inline-block mr-2 relative z-10" />
+              <span className="relative z-10">Model Feedback</span>
+            </button>
           </div>
         </div>
 
@@ -362,6 +379,8 @@ export function AdminDashboard() {
           <MedicationManagement />
         ) : viewMode === 'orders' ? (
           <OrderHistory />
+        ) : viewMode === 'model-feedback' ? (
+          <ModelFeedbackDashboard />
         ) : viewMode === 'dashboard' ? (
           <>
             {/* Statistics Cards */}

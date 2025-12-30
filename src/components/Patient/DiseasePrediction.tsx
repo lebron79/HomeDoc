@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { predictDisease, PredictionResult, checkApiHealth } from '../../lib/diseaseApi';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   Search, 
   Activity, 
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 
 export function DiseasePrediction() {
+  const { user } = useAuth();
   const [symptoms, setSymptoms] = useState('');
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -31,7 +33,8 @@ export function DiseasePrediction() {
     setLoading(true);
     setResult(null);
     
-    const prediction = await predictDisease(symptoms);
+    // Pass user ID to save prediction for doctor review
+    const prediction = await predictDisease(symptoms, user?.id);
     setResult(prediction);
     setLoading(false);
   };

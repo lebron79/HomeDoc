@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { DoctorMessaging } from './DoctorMessaging';
 import { DoctorCasesList } from './DoctorCasesList';
+import { PredictionReview } from './PredictionReview';
 import { Footer } from '../Layout/Footer';
 import { ParticlesBackground } from '../Layout/ParticlesBackground';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -23,7 +24,8 @@ import {
   ShoppingCart,
   Pill,
   Package,
-  FileText
+  FileText,
+  Sparkles
 } from 'lucide-react';
 
 interface Patient {
@@ -39,7 +41,7 @@ export function DoctorDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'overview' | 'patients' | 'analytics' | 'messages' | 'cases'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'patients' | 'analytics' | 'messages' | 'cases' | 'predictions'>('overview');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
@@ -55,8 +57,8 @@ export function DoctorDashboard() {
     const caseIdParam = searchParams.get('caseId');
     const patientIdParam = searchParams.get('patientId');
     
-    if (tabParam && ['overview', 'patients', 'analytics', 'messages', 'cases'].includes(tabParam)) {
-      setActiveTab(tabParam as 'overview' | 'patients' | 'analytics' | 'messages' | 'cases');
+    if (tabParam && ['overview', 'patients', 'analytics', 'messages', 'cases', 'predictions'].includes(tabParam)) {
+      setActiveTab(tabParam as 'overview' | 'patients' | 'analytics' | 'messages' | 'cases' | 'predictions');
     }
     
     if (caseIdParam && patientIdParam) {
@@ -698,6 +700,17 @@ export function DoctorDashboard() {
               <FileText className="w-4 h-4" />
               Cases
             </button>
+            <button
+              onClick={() => setActiveTab('predictions')}
+              className={`flex-1 min-w-[120px] px-4 py-3 font-medium transition-colors flex items-center justify-center gap-2 border-b-2 ${
+                activeTab === 'predictions'
+                  ? 'border-violet-500 text-violet-600 bg-violet-50'
+                  : 'border-transparent text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              AI Review
+            </button>
           </div>
         </div>
 
@@ -713,6 +726,11 @@ export function DoctorDashboard() {
           {activeTab === 'cases' && (
             <div className="space-y-6">
               <DoctorCasesList onOpenChat={handleOpenChat} />
+            </div>
+          )}
+          {activeTab === 'predictions' && (
+            <div className="space-y-6">
+              <PredictionReview />
             </div>
           )}
           </div>
