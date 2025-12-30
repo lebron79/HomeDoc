@@ -22,6 +22,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "./Layout/Footer";
 import { PageSEO } from "./SEO";
+import { WelcomePopup } from "./WelcomePopup";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -53,6 +54,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   return (
     <>
       <PageSEO.Home />
+      <WelcomePopup onGetStarted={onGetStarted} />
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-red-50">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-lg border-b border-blue-100 sticky top-0 z-50 shadow-sm">
